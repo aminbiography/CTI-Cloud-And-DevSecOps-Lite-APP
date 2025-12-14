@@ -1,0 +1,1159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cloud & DevSecOps Lite APP</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#121a33;--muted:#93a4c7;--text:#e9efff;--accent:#6aa6ff;--good:#38d39f;--warn:#ffcc66;--bad:#ff6b6b;--border:rgba(255,255,255,.10)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:radial-gradient(1200px 700px at 20% -10%, rgba(106,166,255,.25), transparent 50%),radial-gradient(1000px 600px at 90% 10%, rgba(56,211,159,.18), transparent 55%),var(--bg);color:var(--text)}
+    header{padding:24px 18px 10px;max-width:1280px;margin:0 auto}
+    header h1{font-size:20px;margin:0 0 6px;letter-spacing:.2px}
+    header p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+
+    main{max-width:1280px;margin:0 auto;padding:14px 18px 34px;display:grid;gap:14px}
+
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .tab{border:1px solid var(--border);background:rgba(18,26,51,.55);color:var(--text);padding:10px 12px;border-radius:12px;font-size:13px;cursor:pointer;user-select:none}
+    .tab[aria-selected="true"]{border-color:rgba(106,166,255,.55);box-shadow:0 0 0 3px rgba(106,166,255,.10) inset}
+
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+    @media (max-width: 1020px){.grid{grid-template-columns:1fr}}
+
+    .card{background:rgba(18,26,51,.65);border:1px solid var(--border);border-radius:16px;padding:14px}
+    .card h2{margin:0 0 10px;font-size:14px}
+
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:12px}
+    input, select, textarea{width:100%;background:rgba(11,16,32,.7);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 11px;font-size:13px;outline:none}
+    textarea{min-height:200px;resize:vertical;line-height:1.35}
+    input:focus, select:focus, textarea:focus{border-color:rgba(106,166,255,.55);box-shadow:0 0 0 3px rgba(106,166,255,.12)}
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 560px){.row{grid-template-columns:1fr}}
+
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    button{border:1px solid var(--border);background:rgba(11,16,32,.55);color:var(--text);padding:10px 12px;border-radius:12px;font-size:13px;cursor:pointer}
+    button.primary{border-color:rgba(106,166,255,.55);background:rgba(106,166,255,.12)}
+    button.danger{border-color:rgba(255,107,107,.6);background:rgba(255,107,107,.10)}
+
+    .hint{color:var(--muted);font-size:12px;line-height:1.45;margin:8px 0 0}
+    .status{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);padding:6px 8px;border-radius:999px;font-size:12px;color:var(--muted)}
+    .pill b{color:var(--text);font-weight:600}
+
+    .kpis{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .kpi{border:1px solid var(--border);border-radius:14px;padding:10px 12px;min-width:165px;background:rgba(11,16,32,.35)}
+    .kpi .v{font-size:18px;margin:0}
+    .kpi .k{margin:0;color:var(--muted);font-size:12px}
+
+    .list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+    .item{border:1px solid var(--border);border-radius:14px;padding:10px 10px 10px 12px;background:rgba(11,16,32,.35)}
+    .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+
+    .badge{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--border);white-space:nowrap}
+    .badge.good{border-color:rgba(56,211,159,.6);color:var(--good)}
+    .badge.warn{border-color:rgba(255,204,102,.7);color:var(--warn)}
+    .badge.bad{border-color:rgba(255,107,107,.7);color:var(--bad)}
+
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,monospace}
+    .small{font-size:12px;color:var(--muted)}
+    .hidden{display:none!important}
+
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th, td{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left;font-size:12px;vertical-align:top}
+    th{color:var(--muted);font-weight:600}
+
+    details{border:1px solid var(--border);border-radius:14px;padding:10px 12px;background:rgba(11,16,32,.25)}
+    details summary{cursor:pointer;color:var(--text)}
+
+    footer{max-width:1280px;margin:0 auto;padding:0 18px 28px;color:var(--muted);font-size:12px;line-height:1.45}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cloud and DevSecOps Lite APP</h1>
+    <p>
+      All analysis runs locally in the browser; no scanning or exploitation.
+    </p>
+  </header>
+
+  <main>
+    <div class="tabs" role="tablist" aria-label="Tools">
+      <button class="tab" role="tab" id="tab-iac" aria-controls="panel-iac" aria-selected="true">IaC Guardrails (Terraform/K8s)</button>
+      <button class="tab" role="tab" id="tab-secrets" aria-controls="panel-secrets" aria-selected="false">Secrets & Credential Hygiene</button>
+      <button class="tab" role="tab" id="tab-cicd" aria-controls="panel-cicd" aria-selected="false">CI/CD Pipeline Risk Checks</button>
+      <button class="tab" role="tab" id="tab-iam" aria-controls="panel-iam" aria-selected="false">IAM Least-Privilege Helper</button>
+    </div>
+
+    <!-- IaC -->
+    <section class="grid" role="tabpanel" id="panel-iac" aria-labelledby="tab-iac">
+      <div class="card">
+        <h2>IaC Guardrails (Terraform / Kubernetes)</h2>
+        <p class="hint" style="margin-top:0">
+          Paste Terraform (HCL-ish) or Kubernetes YAML. The tool applies guardrails and produces findings with recommended remediations.
+          This is a static check; it does not deploy or scan.
+        </p>
+
+        <label for="iac-kind">Input type</label>
+        <select id="iac-kind">
+          <option value="auto" selected>Auto-detect</option>
+          <option value="terraform">Terraform (HCL-ish)</option>
+          <option value="k8s">Kubernetes YAML</option>
+        </select>
+
+        <label for="iac-raw">Paste IaC</label>
+        <textarea id="iac-raw" class="mono" placeholder="Paste Terraform or Kubernetes YAML."></textarea>
+
+        <div class="row">
+          <div>
+            <label for="iac-profile">Guardrail profile</label>
+            <select id="iac-profile">
+              <option value="baseline" selected>Baseline</option>
+              <option value="strict">Strict (prod)</option>
+            </select>
+          </div>
+          <div>
+            <label for="iac-cloud">Cloud context</label>
+            <select id="iac-cloud">
+              <option value="agnostic" selected>Cloud-agnostic</option>
+              <option value="aws">AWS</option>
+              <option value="azure">Azure</option>
+              <option value="gcp">GCP</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="iac-run">Lint</button>
+          <button id="iac-demo">Load demo</button>
+          <button class="danger" id="iac-clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Findings</h2>
+        <div class="status">
+          <span class="pill"><b>Last run</b> <span id="iac-last">—</span></span>
+          <span class="pill"><b>Findings</b> <span id="iac-count">0</span></span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><p class="v" id="iac-kpi-high">0</p><p class="k">High</p></div>
+          <div class="kpi"><p class="v" id="iac-kpi-med">0</p><p class="k">Medium</p></div>
+          <div class="kpi"><p class="v" id="iac-kpi-low">0</p><p class="k">Low</p></div>
+        </div>
+        <ul class="list" id="iac-list"></ul>
+        <div id="iac-err" class="small"></div>
+      </div>
+    </section>
+
+    <!-- Secrets -->
+    <section class="grid hidden" role="tabpanel" id="panel-secrets" aria-labelledby="tab-secrets">
+      <div class="card">
+        <h2>Secrets & Credential Hygiene</h2>
+        <p class="hint" style="margin-top:0">
+          Paste text (code, CI config, env files, logs). The tool detects likely secrets using conservative heuristics and recommends safe handling.
+          It will not exfiltrate anything; it runs locally.
+        </p>
+
+        <label for="sec-scope">Detection scope</label>
+        <select id="sec-scope">
+          <option value="balanced" selected>Balanced</option>
+          <option value="strict">Strict (more findings)</option>
+          <option value="minimal">Minimal (fewer findings)</option>
+        </select>
+
+        <label for="sec-raw">Paste text</label>
+        <textarea id="sec-raw" class="mono" placeholder="Paste code snippets, CI YAML, .env content, or logs."></textarea>
+
+        <div class="row">
+          <div>
+            <label for="sec-redact">Auto-redact in output</label>
+            <select id="sec-redact">
+              <option value="yes" selected>Yes</option>
+              <option value="no">No (show full match; not recommended)</option>
+            </select>
+          </div>
+          <div>
+            <label for="sec-max">Max findings</label>
+            <input id="sec-max" type="number" min="10" value="200" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="sec-run">Scan</button>
+          <button id="sec-demo">Load demo</button>
+          <button class="danger" id="sec-clear">Clear</button>
+        </div>
+
+        <details style="margin-top:10px">
+          <summary class="small">What is flagged?</summary>
+          <div class="small" style="margin-top:8px; line-height:1.5">
+            Examples include: AWS access keys, GitHub tokens, private keys, JWTs, generic API keys, and high-entropy strings near secret-like variable names.
+            This is heuristic-based and may produce false positives.
+          </div>
+        </details>
+      </div>
+
+      <div class="card">
+        <h2>Findings</h2>
+        <div class="status">
+          <span class="pill"><b>Last run</b> <span id="sec-last">—</span></span>
+          <span class="pill"><b>Findings</b> <span id="sec-count">0</span></span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><p class="v" id="sec-kpi-high">0</p><p class="k">High</p></div>
+          <div class="kpi"><p class="v" id="sec-kpi-med">0</p><p class="k">Medium</p></div>
+          <div class="kpi"><p class="v" id="sec-kpi-low">0</p><p class="k">Low</p></div>
+        </div>
+        <ul class="list" id="sec-list"></ul>
+        <div id="sec-err" class="small"></div>
+      </div>
+    </section>
+
+    <!-- CI/CD -->
+    <section class="grid hidden" role="tabpanel" id="panel-cicd" aria-labelledby="tab-cicd">
+      <div class="card">
+        <h2>CI/CD Pipeline Risk Checks</h2>
+        <p class="hint" style="margin-top:0">
+          Paste GitHub Actions, GitLab CI, Jenkinsfile, or generic pipeline YAML. The tool flags risky patterns: unpinned actions, broad permissions, unsafe downloads, and missing provenance.
+        </p>
+
+        <label for="ci-kind">Pipeline type</label>
+        <select id="ci-kind">
+          <option value="auto" selected>Auto-detect</option>
+          <option value="gha">GitHub Actions</option>
+          <option value="gitlab">GitLab CI</option>
+          <option value="jenkins">Jenkinsfile</option>
+          <option value="generic">Generic YAML</option>
+        </select>
+
+        <label for="ci-raw">Paste pipeline config</label>
+        <textarea id="ci-raw" class="mono" placeholder="Paste YAML or Jenkinsfile content."></textarea>
+
+        <div class="row">
+          <div>
+            <label for="ci-profile">Risk profile</label>
+            <select id="ci-profile">
+              <option value="baseline" selected>Baseline</option>
+              <option value="strict">Strict</option>
+            </select>
+          </div>
+          <div>
+            <label for="ci-repo">Repo sensitivity</label>
+            <select id="ci-repo">
+              <option value="normal" selected>Normal</option>
+              <option value="high">High (prod deploy / secrets)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="ci-run">Analyze</button>
+          <button id="ci-demo">Load demo</button>
+          <button id="ci-export">Export report</button>
+          <button class="danger" id="ci-clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Findings</h2>
+        <div class="status">
+          <span class="pill"><b>Last run</b> <span id="ci-last">—</span></span>
+          <span class="pill"><b>Findings</b> <span id="ci-count">0</span></span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><p class="v" id="ci-kpi-high">0</p><p class="k">High</p></div>
+          <div class="kpi"><p class="v" id="ci-kpi-med">0</p><p class="k">Medium</p></div>
+          <div class="kpi"><p class="v" id="ci-kpi-low">0</p><p class="k">Low</p></div>
+        </div>
+        <ul class="list" id="ci-list"></ul>
+        <div id="ci-err" class="small"></div>
+      </div>
+    </section>
+
+    <!-- IAM -->
+    <section class="grid hidden" role="tabpanel" id="panel-iam" aria-labelledby="tab-iam">
+      <div class="card">
+        <h2>IAM Least-Privilege Helper</h2>
+        <p class="hint" style="margin-top:0">
+          Paste a policy document (AWS IAM JSON or generic). The tool flags broad permissions (wildcards), risky actions, and missing conditions; then suggests safer patterns.
+          This is advisory and does not apply changes.
+        </p>
+
+        <label for="iam-kind">Policy type</label>
+        <select id="iam-kind">
+          <option value="aws" selected>AWS IAM JSON</option>
+          <option value="generic">Generic JSON (best effort)</option>
+        </select>
+
+        <label for="iam-raw">Paste policy JSON</label>
+        <textarea id="iam-raw" class="mono" placeholder='Paste IAM JSON. Example:\n{ "Version": "2012-10-17", "Statement": [{"Effect":"Allow","Action":"s3:*","Resource":"*"}] }'></textarea>
+
+        <div class="row">
+          <div>
+            <label for="iam-profile">Strictness</label>
+            <select id="iam-profile">
+              <option value="baseline" selected>Baseline</option>
+              <option value="strict">Strict (prod)</option>
+            </select>
+          </div>
+          <div>
+            <label for="iam-scope">Assumed scope</label>
+            <select id="iam-scope">
+              <option value="app" selected>Application role</option>
+              <option value="admin">Admin role (still avoid wildcards)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="iam-run">Review</button>
+          <button id="iam-demo">Load demo</button>
+          <button id="iam-export">Export suggestions</button>
+          <button class="danger" id="iam-clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Review Output</h2>
+        <div class="status">
+          <span class="pill"><b>Last run</b> <span id="iam-last">—</span></span>
+          <span class="pill"><b>Findings</b> <span id="iam-count">0</span></span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><p class="v" id="iam-kpi-high">0</p><p class="k">High</p></div>
+          <div class="kpi"><p class="v" id="iam-kpi-med">0</p><p class="k">Medium</p></div>
+          <div class="kpi"><p class="v" id="iam-kpi-low">0</p><p class="k">Low</p></div>
+        </div>
+        <ul class="list" id="iam-list"></ul>
+        <div class="item" style="margin-top:10px">
+          <div class="small"><b>Suggested rewrite (template)</b></div>
+          <textarea id="iam-suggest" class="mono" style="min-height:170px" readonly></textarea>
+        </div>
+        <div id="iam-err" class="small"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="pill" style="margin-bottom:10px"><b>Safety</b> Static checks only. Use on artifacts you are authorized to review.</div>
+    <div>Tip: Integrate these checks into PR gates and require exceptions to be documented with expiry dates.</div>
+  </footer>
+
+  <script>
+    // ------------------------------
+    // Tabs & utilities
+    // ------------------------------
+    const $ = (id) => document.getElementById(id);
+    const nowStr = () => new Date().toLocaleString();
+
+    function setTab(active){
+      const tabs = ["iac","secrets","cicd","iam"];
+      for(const t of tabs){
+        $("tab-"+t).setAttribute("aria-selected", String(t===active));
+        $("panel-"+t).classList.toggle("hidden", t!==active);
+      }
+    }
+    ["iac","secrets","cicd","iam"].forEach(t => $("tab-"+t).addEventListener("click", ()=>setTab(t)));
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+    function badgeClass(sev){
+      const s = String(sev||"").toUpperCase();
+      if(s === "CRITICAL" || s === "HIGH") return "bad";
+      if(s === "MEDIUM") return "warn";
+      return "good";
+    }
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    function clearList(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+
+    function renderFindings(prefix, findings){
+      $(prefix+"-last").textContent = nowStr();
+      $(prefix+"-count").textContent = String(findings.length);
+      const high = findings.filter(f=>f.sev==="HIGH"||f.sev==="CRITICAL").length;
+      const med  = findings.filter(f=>f.sev==="MEDIUM").length;
+      const low  = findings.filter(f=>f.sev==="LOW").length;
+      $(prefix+"-kpi-high").textContent = String(high);
+      $(prefix+"-kpi-med").textContent  = String(med);
+      $(prefix+"-kpi-low").textContent  = String(low);
+
+      const list = $(prefix+"-list");
+      clearList(list);
+      if(!findings.length){
+        const li = document.createElement("li");
+        li.className = "item";
+        li.innerHTML = `<div class="small">No findings.</div>`;
+        list.appendChild(li);
+        return;
+      }
+      for(const f of findings){
+        const li = document.createElement("li");
+        li.className = "item";
+        li.innerHTML = `
+          <div class="top">
+            <div>
+              <div><span class="mono">${escapeHtml(f.code||"FINDING")}</span> <span class="small">${escapeHtml(f.title||"")}</span></div>
+              <div class="small" style="margin-top:6px">${escapeHtml(f.detail||"")}</div>
+              ${f.fix ? `<div class="small" style="margin-top:6px"><b>Fix:</b> ${escapeHtml(f.fix)}</div>` : ""}
+              ${f.snip ? `<details style="margin-top:8px"><summary class="small">Snippet</summary><div class="small mono" style="margin-top:6px; white-space:pre-wrap">${escapeHtml(f.snip)}</div></details>` : ""}
+            </div>
+            <span class="badge ${badgeClass(f.sev)}">${escapeHtml(f.sev)}</span>
+          </div>
+        `;
+        list.appendChild(li);
+      }
+    }
+
+    // ------------------------------
+    // IaC Guardrails
+    // ------------------------------
+    function detectIacKind(raw){
+      const s = raw.trim();
+      if(!s) return "terraform";
+      if(/^\s*resource\s+\"/m.test(s) || /^\s*provider\s+\"/m.test(s) || /^\s*module\s+\"/m.test(s)) return "terraform";
+      if(/^\s*apiVersion\s*:/m.test(s) || /^\s*kind\s*:/m.test(s)) return "k8s";
+      return "terraform";
+    }
+
+    function lintTerraform(raw, profile, cloud){
+      const s = raw;
+      const strict = profile === "strict";
+      const f = [];
+
+      // Very small HCL-ish heuristics.
+      if(/\bingress\b[\s\S]*\bcidr_blocks\b[\s\S]*\"0\.0\.0\.0\/0\"/m.test(s)){
+        f.push({
+          sev: strict ? "HIGH" : "MEDIUM",
+          code: "TF-NET-OPEN",
+          title: "Security group allows 0.0.0.0/0",
+          detail: "Ingress appears to allow unrestricted IPv4 access.",
+          fix: "Restrict CIDRs, use security group references, or front with a load balancer/WAF.",
+          snip: extractSnippet(s, /ingress[\s\S]{0,400}cidr_blocks[\s\S]{0,120}0\.0\.0\.0\/0/i)
+        });
+      }
+
+      if(/\bpublicly_accessible\s*=\s*true\b/i.test(s)){
+        f.push({
+          sev: "HIGH",
+          code: "TF-DB-PUBLIC",
+          title: "Database marked publicly accessible",
+          detail: "Resource sets publicly_accessible=true.",
+          fix: "Set publicly_accessible=false and enforce private subnet placement.",
+          snip: extractSnippet(s, /publicly_accessible\s*=\s*true/i)
+        });
+      }
+
+      if(/\bencrypted\s*=\s*false\b/i.test(s) || /\bserver_side_encryption\b[\s\S]*\benabled\s*=\s*false\b/i.test(s)){
+        f.push({
+          sev: strict ? "HIGH" : "MEDIUM",
+          code: "TF-ENC-OFF",
+          title: "Encryption disabled",
+          detail: "An encryption-related flag is set to false.",
+          fix: "Enable encryption at rest and enforce a customer-managed key where required.",
+          snip: extractSnippet(s, /(encrypted\s*=\s*false|enabled\s*=\s*false)/i)
+        });
+      }
+
+      if(/\bversioning\b[\s\S]*\benabled\s*=\s*false\b/i.test(s)){
+        f.push({
+          sev: "LOW",
+          code: "TF-OBJ-NOVERSION",
+          title: "Object versioning disabled",
+          detail: "Versioning appears disabled for object storage.",
+          fix: "Enable versioning for recovery and protection against accidental deletes.",
+          snip: extractSnippet(s, /versioning[\s\S]{0,200}enabled\s*=\s*false/i)
+        });
+      }
+
+      if(/\b("\*"|\*)\b/.test(s) && /\bpolicy\b/i.test(s)){
+        f.push({
+          sev: strict ? "HIGH" : "MEDIUM",
+          code: "TF-IAM-WILDCARD",
+          title: "Possible wildcard IAM permissions",
+          detail: "Policy content includes wildcard(s) which may be overly broad.",
+          fix: "Scope actions/resources; require conditions; split admin vs app roles.",
+          snip: extractSnippet(s, /(policy\s*=\s*<<|policy\s*=\s*\"|\"Action\"|\"Resource\")/i)
+        });
+      }
+
+      // Cloud-specific nudges.
+      if(cloud === "aws" && !/\baws_cloudtrail\b|cloudtrail/i.test(s)){
+        f.push({
+          sev: "LOW",
+          code: "TF-AWS-LOG",
+          title: "No obvious CloudTrail configuration in snippet",
+          detail: "If this is account baseline IaC, ensure CloudTrail is enabled and log integrity is enforced.",
+          fix: "Enable CloudTrail with multi-region trails and log file validation (and centralize logs)."
+        });
+      }
+
+      return f;
+    }
+
+    function lintK8s(raw, profile){
+      const s = raw;
+      const strict = profile === "strict";
+      const f = [];
+
+      if(/\bhostNetwork\s*:\s*true\b/i.test(s)){
+        f.push({
+          sev: strict ? "HIGH" : "MEDIUM",
+          code: "K8S-HOSTNET",
+          title: "Pod uses hostNetwork",
+          detail: "hostNetwork=true can bypass network policy expectations.",
+          fix: "Avoid hostNetwork unless required; document exception and constrain via PSP/OPA/PSA equivalent.",
+          snip: extractSnippet(s, /hostNetwork\s*:\s*true/i)
+        });
+      }
+
+      if(/\bprivileged\s*:\s*true\b/i.test(s)){
+        f.push({
+          sev: "HIGH",
+          code: "K8S-PRIV",
+          title: "Privileged container",
+          detail: "privileged=true grants broad host capabilities.",
+          fix: "Remove privileged; use least capabilities and drop all by default.",
+          snip: extractSnippet(s, /privileged\s*:\s*true/i)
+        });
+      }
+
+      if(/\ballowPrivilegeEscalation\s*:\s*true\b/i.test(s)){
+        f.push({
+          sev: strict ? "HIGH" : "MEDIUM",
+          code: "K8S-APE",
+          title: "AllowPrivilegeEscalation enabled",
+          detail: "allowPrivilegeEscalation=true increases risk.",
+          fix: "Set allowPrivilegeEscalation=false and define explicit capabilities.",
+          snip: extractSnippet(s, /allowPrivilegeEscalation\s*:\s*true/i)
+        });
+      }
+
+      if(/\b(runAsNonRoot|runAsUser)\b/i.test(s) === false){
+        f.push({
+          sev: "MEDIUM",
+          code: "K8S-NONROOT",
+          title: "No explicit non-root configuration detected",
+          detail: "Consider setting runAsNonRoot and a non-zero runAsUser.",
+          fix: "Set securityContext.runAsNonRoot=true and runAsUser to non-zero; enforce via admission policies."
+        });
+      }
+
+      if(/\bresources\s*:\s*\n\s*limits\s*:/i.test(s) === false){
+        f.push({
+          sev: "LOW",
+          code: "K8S-LIMITS",
+          title: "No resource limits detected",
+          detail: "Missing CPU/memory limits can lead to noisy neighbor / DoS risk.",
+          fix: "Set requests/limits and enforce via LimitRanges/Policies."
+        });
+      }
+
+      if(/\bimage\s*:\s*[^\n]+:latest\b/i.test(s)){
+        f.push({
+          sev: "MEDIUM",
+          code: "K8S-LATEST",
+          title: "Image tag uses :latest",
+          detail: "Mutable tags reduce supply chain integrity and reproducibility.",
+          fix: "Pin image tags or use digests (sha256:...).",
+          snip: extractSnippet(s, /image\s*:\s*[^\n]+:latest/i)
+        });
+      }
+
+      return f;
+    }
+
+    function extractSnippet(text, re){
+      const m = text.match(re);
+      if(!m || m.index == null) return "";
+      const start = Math.max(0, m.index - 140);
+      const end = Math.min(text.length, m.index + 260);
+      return text.slice(start, end);
+    }
+
+    $("iac-run").addEventListener("click", ()=>{
+      $("iac-err").textContent = "";
+      try{
+        const raw = $("iac-raw").value || "";
+        let kind = $("iac-kind").value;
+        if(kind === "auto") kind = detectIacKind(raw);
+        const profile = $("iac-profile").value;
+        const cloud = $("iac-cloud").value;
+
+        const findings = kind === "k8s" ? lintK8s(raw, profile) : lintTerraform(raw, profile, cloud);
+        // Rank findings.
+        const rank = {CRITICAL:3,HIGH:2,MEDIUM:1,LOW:0};
+        findings.sort((a,b)=>(rank[b.sev]??0)-(rank[a.sev]??0));
+
+        renderFindings("iac", findings);
+      } catch(e){
+        $("iac-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("iac-demo").addEventListener("click", ()=>{
+      $("iac-kind").value = "auto";
+      $("iac-profile").value = "strict";
+      $("iac-cloud").value = "aws";
+      $("iac-raw").value = [
+        'resource "aws_security_group" "web" {',
+        '  name = "web"',
+        '  ingress {',
+        '    from_port = 22',
+        '    to_port = 22',
+        '    protocol = "tcp"',
+        '    cidr_blocks = ["0.0.0.0/0"]',
+        '  }',
+        '}',
+        '',
+        'resource "aws_db_instance" "db" {',
+        '  allocated_storage    = 20',
+        '  engine               = "postgres"',
+        '  publicly_accessible  = true',
+        '  encrypted            = false',
+        '}'
+      ].join("\n");
+      $("iac-run").click();
+    });
+
+    $("iac-clear").addEventListener("click", ()=>{
+      $("iac-kind").value = "auto";
+      $("iac-profile").value = "baseline";
+      $("iac-cloud").value = "agnostic";
+      $("iac-raw").value = "";
+      $("iac-err").textContent = "";
+      $("iac-last").textContent = "—";
+      $("iac-count").textContent = "0";
+      $("iac-kpi-high").textContent = "0";
+      $("iac-kpi-med").textContent = "0";
+      $("iac-kpi-low").textContent = "0";
+      clearList($("iac-list"));
+    });
+
+    // ------------------------------
+    // Secrets hygiene
+    // ------------------------------
+    function entropy(str){
+      // Shannon entropy approximation.
+      const s = String(str);
+      if(!s) return 0;
+      const freq = new Map();
+      for(const ch of s) freq.set(ch, (freq.get(ch)||0)+1);
+      let ent = 0;
+      for(const c of freq.values()){
+        const p = c / s.length;
+        ent -= p * Math.log2(p);
+      }
+      return ent;
+    }
+
+    function redact(val){
+      const s = String(val);
+      if(s.length <= 8) return "****";
+      return s.slice(0,3) + "…" + s.slice(-3);
+    }
+
+    function scanSecrets(raw, scope, doRedact, maxFindings){
+      const lines = raw.split(/\r?\n/);
+      const f = [];
+
+      // Conservative patterns (no attempt to validate, only detection).
+      const patterns = [
+        { code:"SEC-PRIVATEKEY", sev:"HIGH", title:"Private key material", re:/-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/ },
+        { code:"SEC-AWS-ACCESS", sev:"HIGH", title:"AWS Access Key ID", re:/\b(AKI|ASIA)[0-9A-Z]{16}\b/ },
+        { code:"SEC-GH-TOKEN", sev:"HIGH", title:"GitHub token", re:/\b(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}\b/ },
+        { code:"SEC-JWT", sev:"MEDIUM", title:"JWT-like token", re:/\beyJ[A-Za-z0-9_\-]+=*\.[A-Za-z0-9_\-]+=*\.[A-Za-z0-9_\-]+=*\b/ },
+        { code:"SEC-GCP-KEY", sev:"HIGH", title:"GCP service account key hint", re:/"type"\s*:\s*"service_account"|"private_key"\s*:\s*"-----BEGIN PRIVATE KEY-----/ },
+        { code:"SEC-AZURE-CONN", sev:"MEDIUM", title:"Azure connection string hint", re:/\b(DefaultEndpointsProtocol=|AccountKey=|SharedAccessSignature=)/ },
+      ];
+
+      const varHint = /(api[_-]?key|token|secret|password|passwd|private[_-]?key|access[_-]?key)/i;
+
+      // Scope controls.
+      const entThresh = scope === "strict" ? 3.5 : scope === "minimal" ? 4.5 : 4.0;
+      const lenThresh = scope === "strict" ? 20 : scope === "minimal" ? 32 : 24;
+
+      for(let i=0;i<lines.length;i++){
+        const line = lines[i];
+        if(!line.trim()) continue;
+
+        // Pattern matches.
+        for(const p of patterns){
+          const m = line.match(p.re);
+          if(m){
+            const match = m[0];
+            f.push({
+              code: p.code,
+              sev: p.sev,
+              title: p.title,
+              detail: `Line ${i+1}: matched ${p.title}.`,
+              fix: "Remove secrets from code/logs, rotate credentials, and use a secrets manager (plus pre-commit scanning).",
+              snip: doRedact ? line.replace(match, redact(match)) : line
+            });
+            if(f.length >= maxFindings) return f;
+          }
+        }
+
+        // Heuristic: variable assignment with high-entropy value.
+        const kv = line.match(/\b([A-Za-z_][A-Za-z0-9_\-]{1,40})\s*[:=]\s*(["']?)([^"'\s]{8,})(\2)/);
+        if(kv && varHint.test(kv[1])){
+          const val = kv[3];
+          if(val.length >= lenThresh && entropy(val) >= entThresh){
+            f.push({
+              code: "SEC-HIENTROPY",
+              sev: scope === "minimal" ? "MEDIUM" : "HIGH",
+              title: "High-entropy value near secret-like variable",
+              detail: `Line ${i+1}: ${kv[1]} appears to hold a secret/token.`,
+              fix: "Move value to secret store; avoid printing in logs; rotate if exposed.",
+              snip: doRedact ? line.replace(val, redact(val)) : line
+            });
+            if(f.length >= maxFindings) return f;
+          }
+        }
+      }
+
+      return f;
+    }
+
+    $("sec-run").addEventListener("click", ()=>{
+      $("sec-err").textContent = "";
+      try{
+        const raw = $("sec-raw").value || "";
+        const scope = $("sec-scope").value;
+        const doRedact = $("sec-redact").value === "yes";
+        const maxFindings = Math.max(10, Number($("sec-max").value)||200);
+        const findings = scanSecrets(raw, scope, doRedact, maxFindings);
+
+        // Rank
+        const rank = {CRITICAL:3,HIGH:2,MEDIUM:1,LOW:0};
+        findings.sort((a,b)=>(rank[b.sev]??0)-(rank[a.sev]??0));
+        renderFindings("sec", findings);
+      } catch(e){
+        $("sec-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("sec-demo").addEventListener("click", ()=>{
+      $("sec-scope").value = "balanced";
+      $("sec-redact").value = "yes";
+      $("sec-raw").value = [
+        'AWS_ACCESS_KEY_ID=AKIA1234567890ABCDEF',
+        'AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"',
+        'GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz1234567890ABCDEFG',
+        'db_password: S3cr3tP@ssw0rd',
+        'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+      ].join("\n");
+      $("sec-run").click();
+    });
+
+    $("sec-clear").addEventListener("click", ()=>{
+      $("sec-scope").value = "balanced";
+      $("sec-redact").value = "yes";
+      $("sec-max").value = "200";
+      $("sec-raw").value = "";
+      $("sec-err").textContent = "";
+      $("sec-last").textContent = "—";
+      $("sec-count").textContent = "0";
+      $("sec-kpi-high").textContent = "0";
+      $("sec-kpi-med").textContent = "0";
+      $("sec-kpi-low").textContent = "0";
+      clearList($("sec-list"));
+    });
+
+    // ------------------------------
+    // CI/CD risk checks
+    // ------------------------------
+    function detectCiKind(raw){
+      const s = raw.toLowerCase();
+      if(/\bname\s*:\s*.*\b(on\s*:\s*|jobs\s*:\s*)/m.test(s) || /uses\s*:\s*actions\//.test(s)) return "gha";
+      if(/\bstages\s*:\s*\n|\bscript\s*:\s*\n|\bon\s*:\s*\n/.test(s) && /gitlab/.test(s)) return "gitlab";
+      if(/pipeline\s*\{|stage\s*\(/.test(raw)) return "jenkins";
+      return "generic";
+    }
+
+    function ciFindings(raw, kind, profile, repo){
+      const strict = profile === "strict";
+      const highRepo = repo === "high";
+      const s = raw;
+      const out = [];
+
+      // Unpinned actions (GitHub): uses: org/action@v1 instead of @<sha>
+      const uses = [...s.matchAll(/\buses\s*:\s*([^\s@]+\/[^\s@]+)@([^\s\n]+)/g)];
+      for(const m of uses){
+        const ref = m[2];
+        if(/^[0-9a-f]{40}$/i.test(ref)) continue; // pinned
+        // Allow official actions at major version? still flagged in strict
+        const sev = (strict || highRepo) ? "HIGH" : "MEDIUM";
+        out.push({
+          sev,
+          code: "CI-UNPINNED",
+          title: "Unpinned action reference",
+          detail: `Action ${m[1]} uses ref '${ref}', not a commit SHA.`,
+          fix: "Pin third-party actions to a commit SHA; review regularly; consider allowlist.",
+          snip: extractAround(s, m.index, 180)
+        });
+      }
+
+      // Broad permissions (GitHub Actions)
+      if(/\bpermissions\s*:\s*\n[\s\S]{0,200}\bcontents\s*:\s*write\b/i.test(s) || /\bpermissions\s*:\s*write-all\b/i.test(s)){
+        out.push({
+          sev: (strict || highRepo) ? "HIGH" : "MEDIUM",
+          code: "CI-PERM",
+          title: "Broad workflow permissions",
+          detail: "Workflow appears to request write permissions broadly.",
+          fix: "Use least-privilege permissions per job; avoid write-all; prefer OIDC with short-lived creds.",
+          snip: extractSnippet(s, /permissions\s*:/i)
+        });
+      }
+
+      // Unsafe curl | bash
+      if(/curl\s+[^\n]+\|\s*(bash|sh)\b/i.test(s) || /wget\s+[^\n]+\|\s*(bash|sh)\b/i.test(s)){
+        out.push({
+          sev: "HIGH",
+          code: "CI-PIPE-SHELL",
+          title: "Piping remote script to shell",
+          detail: "Pipeline runs remote content directly (curl|bash).",
+          fix: "Vendor/verify scripts, pin checksums, and use signed releases (SLSA/provenance).",
+          snip: extractSnippet(s, /(curl|wget)[^\n]{0,200}\|\s*(bash|sh)/i)
+        });
+      }
+
+      // Missing artifact integrity/provenance
+      if(highRepo && !/cosign|slsa|provenance|attestation|sigstore/i.test(s)){
+        out.push({
+          sev: "MEDIUM",
+          code: "CI-PROVENANCE",
+          title: "No artifact provenance/signing signals detected",
+          detail: "For high-sensitivity repos, consider signing artifacts and generating provenance.",
+          fix: "Adopt artifact signing (Sigstore/Cosign) and provenance (SLSA)."
+        });
+      }
+
+      // Printing secrets
+      if(/\becho\s+\$\{?\{?\s*secrets\./i.test(s) || /\becho\s+\$\w*(secret|token|key)\w*/i.test(s)){
+        out.push({
+          sev: "HIGH",
+          code: "CI-SECRET-PRINT",
+          title: "Potential secret output to logs",
+          detail: "Pipeline appears to echo secrets or secret-like variables.",
+          fix: "Do not print secrets; rely on masked variables; use OIDC and short-lived credentials.",
+          snip: extractSnippet(s, /echo\s+/i)
+        });
+      }
+
+      // PR from forks + secrets
+      if(/pull_request_target/i.test(s) && /secrets\./i.test(s)){
+        out.push({
+          sev: "HIGH",
+          code: "CI-PR-TARGET",
+          title: "pull_request_target used with secrets",
+          detail: "This pattern can expose secrets to untrusted PR code if misconfigured.",
+          fix: "Avoid exposing secrets to untrusted contexts; use pull_request with restricted permissions.",
+          snip: extractSnippet(s, /pull_request_target/i)
+        });
+      }
+
+      // Generic: allowlist for downloads
+      if(/\b(apt-get|yum|apk)\s+install\b/i.test(s) && strict){
+        out.push({
+          sev: "LOW",
+          code: "CI-PKG",
+          title: "Package installs in CI",
+          detail: "Ensure base images are pinned and packages are installed from trusted repositories.",
+          fix: "Pin images/digests and consider dependency caching with integrity checks."
+        });
+      }
+
+      // Deduplicate similar issues
+      const uniq = [];
+      const seen = new Set();
+      for(const x of out){
+        const key = x.code + "|" + (x.detail||"");
+        if(seen.has(key)) continue;
+        seen.add(key);
+        uniq.push(x);
+      }
+
+      const rank = {CRITICAL:3,HIGH:2,MEDIUM:1,LOW:0};
+      uniq.sort((a,b)=>(rank[b.sev]??0)-(rank[a.sev]??0));
+      return uniq;
+    }
+
+    function extractAround(text, idx, span){
+      const start = Math.max(0, idx - Math.floor(span/2));
+      const end = Math.min(text.length, idx + Math.floor(span/2));
+      return text.slice(start, end);
+    }
+
+    let ciCache = [];
+
+    $("ci-run").addEventListener("click", ()=>{
+      $("ci-err").textContent = "";
+      try{
+        const raw = $("ci-raw").value || "";
+        let kind = $("ci-kind").value;
+        if(kind === "auto") kind = detectCiKind(raw);
+        const profile = $("ci-profile").value;
+        const repo = $("ci-repo").value;
+
+        const findings = ciFindings(raw, kind, profile, repo);
+        ciCache = findings;
+        renderFindings("ci", findings);
+      } catch(e){
+        $("ci-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("ci-demo").addEventListener("click", ()=>{
+      $("ci-kind").value = "gha";
+      $("ci-profile").value = "strict";
+      $("ci-repo").value = "high";
+      $("ci-raw").value = [
+        'name: CI',
+        'on: [push, pull_request_target]',
+        'permissions: write-all',
+        'jobs:',
+        '  build:',
+        '    runs-on: ubuntu-latest',
+        '    steps:',
+        '      - uses: actions/checkout@v4',
+        '      - uses: some-org/some-action@v1',
+        '      - name: Install',
+        '        run: curl -sSL https://example.com/install.sh | bash',
+        '      - name: Debug',
+        '        run: echo ${{ secrets.PROD_TOKEN }}'
+      ].join("\n");
+      $("ci-run").click();
+    });
+
+    $("ci-export").addEventListener("click", ()=>{
+      $("ci-err").textContent = "";
+      try{
+        if(!ciCache.length){
+          $("ci-err").textContent = "Nothing to export. Run analysis first.";
+          return;
+        }
+        const blob = new Blob([JSON.stringify({generated_at: new Date().toISOString(), findings: ciCache}, null, 2)], {type:"application/json;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "cicd_risk_report.json";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      } catch(e){
+        $("ci-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("ci-clear").addEventListener("click", ()=>{
+      $("ci-kind").value = "auto";
+      $("ci-profile").value = "baseline";
+      $("ci-repo").value = "normal";
+      $("ci-raw").value = "";
+      $("ci-err").textContent = "";
+      $("ci-last").textContent = "—";
+      $("ci-count").textContent = "0";
+      $("ci-kpi-high").textContent = "0";
+      $("ci-kpi-med").textContent = "0";
+      $("ci-kpi-low").textContent = "0";
+      clearList($("ci-list"));
+      ciCache = [];
+    });
+
+    // ------------------------------
+    // IAM least privilege
+    // ------------------------------
+    function parseJsonSafe(raw){
+      try{ return JSON.parse(raw); } catch{ return null; }
+    }
+
+    function asArray(x){
+      if(Array.isArray(x)) return x;
+      if(x == null) return [];
+      return [x];
+    }
+
+    function iamReview(policy, profile, scope){
+      const strict = profile === "strict";
+      const isAdmin = scope === "admin";
+
+      const out = [];
+      const suggest = {
+        Version: "2012-10-17",
+        Statement: []
+      };
+
+      const statements = asArray(policy?.Statement);
+      if(!statements.length){
+        out.push({sev:"MEDIUM", code:"IAM-PARSE", title:"No statements found", detail:"Policy does not contain a Statement array.", fix:"Ensure policy JSON is valid and includes Statement."});
+        return { findings: out, suggestion: JSON.stringify(suggest, null, 2) };
+      }
+
+      const riskyActions = [
+        "iam:*","sts:AssumeRole","kms:Decrypt","s3:*","ec2:*","lambda:*","secretsmanager:*","ssm:*","ecr:*","logs:*"
+      ];
+
+      for(const st of statements){
+        const effect = (st.Effect||"").toLowerCase();
+        const actions = asArray(st.Action).map(String);
+        const resources = asArray(st.Resource).map(String);
+        const hasWildcardAction = actions.some(a=>a.includes("*") || a === "*");
+        const hasWildcardRes = resources.some(r=>r.includes("*") || r === "*");
+        const cond = st.Condition;
+
+        if(effect === "allow" && (hasWildcardAction || hasWildcardRes)){
+          out.push({
+            sev: (strict || !isAdmin) ? "HIGH" : "MEDIUM",
+            code: "IAM-WILDCARD",
+            title: "Wildcard permissions detected",
+            detail: `Allow statement uses wildcard Action/Resource (Action=${actions.join(";")||""}, Resource=${resources.join(";")||""}).`,
+            fix: "Scope actions to required verbs and resources to specific ARNs; add Condition (e.g., aws:PrincipalArn, aws:SourceVpce, aws:RequestedRegion).",
+            snip: JSON.stringify(st, null, 2)
+          });
+        }
+
+        // Flag sensitive actions.
+        for(const ra of riskyActions){
+          const base = ra.replace("*", "");
+          if(actions.some(a => a.toLowerCase().startsWith(base.toLowerCase()))){
+            out.push({
+              sev: (strict || !isAdmin) ? "HIGH" : "MEDIUM",
+              code: "IAM-RISKY",
+              title: "High-impact actions present",
+              detail: `Statement includes '${ra}'.`,
+              fix: "Ensure this is necessary; prefer narrow actions and add conditions; split privileged operations to a break-glass role.",
+              snip: JSON.stringify(st, null, 2)
+            });
+          }
+        }
+
+        if(effect === "allow" && !cond && (strict || !isAdmin)){
+          out.push({
+            sev: "MEDIUM",
+            code: "IAM-NOCOND",
+            title: "No Condition on Allow statement",
+            detail: "Allow statement lacks a Condition block; this may be acceptable but often increases blast radius.",
+            fix: "Add context conditions where possible (VPC endpoints, source IP, MFA, resource tags, principal tags).",
+            snip: JSON.stringify(st, null, 2)
+          });
+        }
+
+        // Build a conservative rewrite template for Allow statements.
+        if(effect === "allow"){
+          const narrowedActions = actions
+            .filter(a=>a && a !== "*")
+            .map(a=>a.includes(":*") ? a.replace(":*", ":List") : a)
+            .slice(0, 20);
+          suggest.Statement.push({
+            Sid: st.Sid || "ScopedAccess",
+            Effect: "Allow",
+            Action: narrowedActions.length ? narrowedActions : ["<service:Action>"] ,
+            Resource: resources.some(r=>r && r !== "*") ? resources : ["<specific-arn>"] ,
+            Condition: st.Condition || { "StringEquals": { "aws:RequestedRegion": ["<region>"] } }
+          });
+        }
+      }
+
+      // Dedup by code+title.
+      const uniq = [];
+      const seen = new Set();
+      for(const x of out){
+        const k = x.code + "|" + x.title + "|" + (x.detail||"");
+        if(seen.has(k)) continue;
+        seen.add(k);
+        uniq.push(x);
+      }
+
+      // Rank
+      const rank = {CRITICAL:3,HIGH:2,MEDIUM:1,LOW:0};
+      uniq.sort((a,b)=>(rank[b.sev]??0)-(rank[a.sev]??0));
+
+      return { findings: uniq, suggestion: JSON.stringify(suggest, null, 2) };
+    }
+
+    let iamCache = { findings: [], suggestion: "" };
+
+    $("iam-run").addEventListener("click", ()=>{
+      $("iam-err").textContent = "";
+      try{
+        const raw = $("iam-raw").value || "";
+        const policy = parseJsonSafe(raw);
+        if(!policy){
+          $("iam-err").textContent = "Could not parse JSON. Ensure the policy is valid JSON.";
+          renderFindings("iam", []);
+          $("iam-suggest").value = "";
+          return;
+        }
+        const profile = $("iam-profile").value;
+        const scope = $("iam-scope").value;
+        const out = iamReview(policy, profile, scope);
+        iamCache = out;
+        renderFindings("iam", out.findings);
+        $("iam-suggest").value = out.suggestion;
+      } catch(e){
+        $("iam-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("iam-demo").addEventListener("click", ()=>{
+      $("iam-kind").value = "aws";
+      $("iam-profile").value = "strict";
+      $("iam-scope").value = "app";
+      $("iam-raw").value = JSON.stringify({
+        Version: "2012-10-17",
+        Statement: [
+          { Effect: "Allow", Action: "s3:*", Resource: "*" },
+          { Effect: "Allow", Action: ["kms:Decrypt", "secretsmanager:GetSecretValue"], Resource: "*" }
+        ]
+      }, null, 2);
+      $("iam-run").click();
+    });
+
+    $("iam-export").addEventListener("click", ()=>{
+      $("iam-err").textContent = "";
+      try{
+        if(!iamCache || (!iamCache.findings?.length && !iamCache.suggestion)){
+          $("iam-err").textContent = "Nothing to export. Run review first.";
+          return;
+        }
+        const blob = new Blob([JSON.stringify({generated_at: new Date().toISOString(), ...iamCache}, null, 2)], {type:"application/json;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "iam_review.json";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      } catch(e){
+        $("iam-err").textContent = `Error: ${e.message}`;
+      }
+    });
+
+    $("iam-clear").addEventListener("click", ()=>{
+      $("iam-kind").value = "aws";
+      $("iam-profile").value = "baseline";
+      $("iam-scope").value = "app";
+      $("iam-raw").value = "";
+      $("iam-err").textContent = "";
+      $("iam-last").textContent = "—";
+      $("iam-count").textContent = "0";
+      $("iam-kpi-high").textContent = "0";
+      $("iam-kpi-med").textContent = "0";
+      $("iam-kpi-low").textContent = "0";
+      clearList($("iam-list"));
+      $("iam-suggest").value = "";
+      iamCache = { findings: [], suggestion: "" };
+    });
+
+    // ------------------------------
+    // Demo placeholders
+    // ------------------------------
+    // Start with empty states.
+    renderFindings("iac", []);
+    renderFindings("sec", []);
+    renderFindings("ci", []);
+    renderFindings("iam", []);
+
+  </script>
+</body>
+</html>
