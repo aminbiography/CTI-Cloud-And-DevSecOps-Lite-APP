@@ -1,5 +1,5 @@
 Live URL:   https://aminbiography.github.io/CTI-Cloud-And-DevSecOps-Lite-APP/
-
+  
 ---
 
 ## Description for users (cloud engineers, DevOps, AppSec)
