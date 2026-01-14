@@ -4,7 +4,7 @@ Live URL:   https://aminbiography.github.io/CTI-Cloud-And-DevSecOps-Lite-APP/
 
 ## Description for users (cloud engineers, DevOps, AppSec)
 
-### What this page is
+### What this page is 
  
 **Cloud and DevSecOps Lite APP** is a browser-only helper that performs **static, non-invasive security checks** on text you paste into it. It does not deploy anything, scan live targets, or attempt exploitation. The intent is fast, explainable hygiene checks you can run during reviews, PRs, or incident follow-up.
 
